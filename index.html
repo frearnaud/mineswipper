@@ -4,16 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <script src="./build/classes.js"></script>
+    <script src="./build/mineswipper.js"></script>
     <script src="./build/game.js"></script>
     <title>Mineswipper</title>
   </head>
   <body>
     <div class="main-wrapper">
       <h1>Mineswipper</h1>
+      <div class="in_form">
+        <div class="in_field">
+          <label for="row_cnt">Rows: </label>
+          <input type="number" value="20" name="row_cnt" id="row_cnt" />
+        </div>
+        <div class="in_field">
+          <label for="col_cnt">Columns: </label>
+          <input type="number" value="20" name="col_cnt" id="col_cnt" />
+        </div>
+        <div class="in_field">
+          <label for="mine_cnt">Mines: </label>
+          <input type="number" value="61" name="mine_cnt" id="mine_cnt" />
+        </div>
+      </div>
+      <button id="reset">Reset</button>
       <div id="game"></div>
       <button id="reveal">Reveal board</button>
-      <button id="reset">Reset</button>
     </div>
   </body>
 </html>

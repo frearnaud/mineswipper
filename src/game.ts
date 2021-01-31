@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   var game = document.getElementById("game");
+  var rowInput = <HTMLInputElement>document.getElementById("row_cnt");
+  var colInput = <HTMLInputElement>document.getElementById("col_cnt");
+  var mineInput = <HTMLInputElement>document.getElementById("mine_cnt");
   var board: Board;
   createBoard();
 
@@ -13,7 +16,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function createBoard() {
-    board = new Board(game, 60, 20, 20);
+    board = new Board(
+      game,
+      parseInt(mineInput.value),
+      parseInt(rowInput.value),
+      parseInt(colInput.value)
+    );
     board.Draw();
   }
 });

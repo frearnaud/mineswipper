@@ -45,6 +45,9 @@ class Board {
     this.columnCount = columnCount;
     this.cells = [];
 
+    var maxMines: number = rowCount * columnCount;
+    if (mineCount > maxMines) mineCount = maxMines;
+
     let minesLeft = mineCount;
 
     for (var i = 0; i < rowCount; i++) {

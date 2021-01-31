@@ -11,11 +11,34 @@ html {
 
 body {
   min-height: 100vh;
-  background-color: rgb(63, 83, 94);
+  background-color: rgb(14, 78, 112);
 }
 
 h1 {
   color: rgb(197, 234, 255);
+}
+
+label {
+  color: white;
+  font-weight: 300;
+}
+
+.in_form {
+  display: flex;
+  flex-direction: column;
+}
+
+.in_field {
+  margin: 3px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.in_field input {
+  margin: 0 0 0 20px;
+  width: 50px;
+  height: 25px;
 }
 
 .main-wrapper {
@@ -27,25 +50,23 @@ h1 {
 }
 
 #game {
+  margin: 30px 0;
   padding: 3px;
   background-color: rgb(160, 193, 209);
-  border-radius: 3px;
-  border: 1px solid grey;
+  border-radius: 5px;
+  border: 1px solid rgb(99, 113, 129);
   display: grid;
   grid-gap: 2px;
-  box-shadow: 0 25px 50px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 50px 25px rgba(0, 0, 0, 0.2);
 }
 
 .cell {
+  position: relative;
   border-radius: 5px;
-  background-color: whitesmoke;
-  border: 1px solid grey;
+  background-color: rgb(226, 236, 241);
+  border: 1px solid rgb(78, 116, 160);
   width: 20px;
   height: 20px;
-}
-
-.revealed {
-  background-color: grey;
 }
 
 .r-0 {
@@ -56,17 +77,25 @@ h1 {
   grid-column: 1 / 2;
 }
 
+button {
+  margin: 5px;
+  width: 150px;
+  height: 30px;
+}
+
 .cell::before {
   font-weight: 700;
+  position: absolute;
+  width: 20px;
+  text-align: center;
 }
 
 .empty {
-  background-color: rgb(175, 175, 175);
+  background-color: rgb(184, 216, 238);
 }
 
 .mine {
   background-color: rgb(255, 180, 180);
-  position: relative;
 }
 
 .mine::before {
