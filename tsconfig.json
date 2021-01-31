@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "outDir": "build",
+        "target": "es2015",
+        "removeComments": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": true
+    },
+    "include": [
+        "./src/*"
+    ]
+}
