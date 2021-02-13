@@ -2,6 +2,7 @@ class Cell {
   isRevealed: boolean;
   containsMine: boolean;
   minesSurrounding: number;
+  flagged: boolean;
   row: number;
   column: number;
 
@@ -11,18 +12,16 @@ class Cell {
     this.row = row;
     this.column = column;
     this.minesSurrounding = -1;
+    this.flagged = false;
   }
 
+  // return false if there is a mine in this cell
   public Reveal(): boolean {
     this.isRevealed = true;
 
     if (!this.containsMine) {
       return false;
     } else return true;
-  }
-
-  private ToString(): string {
-    return `[${this.row}, ${this.column}] - containsMine:${this.containsMine}`;
   }
 }
 
@@ -56,6 +55,7 @@ class Board {
       }
     }
 
+    // throw mines on board!
     while (minesLeft > 0) {
       let randomRow = randomNumber(0, rowCount - 1);
       let randomCol = randomNumber(0, columnCount - 1);
@@ -66,33 +66,89 @@ class Board {
         minesLeft--;
       }
     }
+
+    // set number of mines surrounding each cells
+    for (var i = 0; i < rowCount; i++) {
+      for (var j = 0; j < columnCount; j++) {
+        let currentCell: Cell = this.GetCell(i, j);
+        let surrounding: Cell[] = this.GetSurroundingCells(currentCell);
+
+        currentCell.minesSurrounding = this.CountMines(surrounding);
+      }
+    }
   }
 
   public GetCell(row: number, column: number): Cell {
     return this.cells.find((c) => c.row === row && c.column === column);
   }
 
-  private RevealCell(cell: Cell) {
-    if (!cell.isRevealed) {
-      let htmlEl = this.FindDiv(cell);
-      cell.Reveal();
+  private ToggleFlag(cell: Cell) {
+    if (cell.isRevealed) return;
 
-      if (cell.containsMine) {
-        htmlEl.classList.add("mine");
-        return;
-      }
+    let htmlEl = this.FindDiv(cell);
+    if (cell.flagged) {
+      htmlEl.classList.remove("flag");
+      cell.flagged = false;
+    } else {
+      htmlEl.classList.add("flag");
+      cell.flagged = true;
+    }
+  }
 
-      var surroundingCells: Cell[] = this.GetSurroundingCells(cell);
-      var minesSurrounding = this.CountMines(surroundingCells);
+  private RevealCell(cell: Cell, directClick: boolean) {
+    // if the cell is flagged, do nothing
+    if (cell.flagged) return;
 
-      if (minesSurrounding === 0) {
-        htmlEl.classList.add("empty");
+    let htmlEl = this.FindDiv(cell);
+    let surroundingCells: Cell[] = this.GetSurroundingCells(cell);
+
+    if (cell.containsMine && directClick) {
+      htmlEl.classList.add("touched");
+      this.RevealBoard();
+    }
+
+    if (cell.isRevealed && directClick) {
+      // check if we have as much flags as mines arround clicked cell
+      // if so, reveal unflagged cells
+      if (
+        cell.minesSurrounding > 0 &&
+        this.CountFlags(surroundingCells) === cell.minesSurrounding
+      ) {
         surroundingCells.forEach((cellArround) => {
-          this.RevealCell(cellArround);
+          if (!cellArround.isRevealed) this.RevealCell(cellArround, false);
         });
-      } else {
-        htmlEl.classList.add("ar" + minesSurrounding);
       }
+    } else {
+      cell.Reveal();
+      this.DisplayCell(cell, htmlEl);
+
+      if (cell.minesSurrounding === 0) {
+        surroundingCells.forEach((cellArround) => {
+          // only direct neighbor
+          if (
+            cellArround.column === cell.column ||
+            cellArround.row === cell.row
+          ) {
+            if (!cellArround.isRevealed) this.RevealCell(cellArround, false);
+          } else {
+            if (cellArround.minesSurrounding > 0 && !cellArround.isRevealed)
+              this.RevealCell(cellArround, false);
+          }
+        });
+      }
+    }
+  }
+
+  private DisplayCell(cell: Cell, htmlEl: HTMLElement) {
+    if (cell.containsMine) {
+      htmlEl.classList.add("mine");
+      return;
+    }
+
+    if (cell.minesSurrounding === 0) {
+      htmlEl.classList.add("empty");
+    } else {
+      htmlEl.classList.add("ar" + cell.minesSurrounding);
     }
   }
 
@@ -139,6 +195,16 @@ class Board {
     return nbMines;
   }
 
+  private CountFlags(cells: Cell[]): number {
+    var nbFlags = 0;
+
+    cells.forEach((cell) => {
+      if (cell.flagged) nbFlags++;
+    });
+
+    return nbFlags;
+  }
+
   private FindDiv(cell: Cell): HTMLElement {
     var el: Element = undefined;
 
@@ -157,10 +223,19 @@ class Board {
         cell.classList.add("cell");
         cell.classList.add("r-" + i);
         cell.classList.add("c-" + j);
-        cell.addEventListener("click", () => {
-          var cellClicked = this.GetCell(i, j);
-          this.RevealCell(cellClicked);
+        cell.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
         });
+        cell.addEventListener("mouseup", (e) => {
+          var cellClicked = this.GetCell(i, j);
+
+          if (e.button === 0) {
+            this.RevealCell(cellClicked, true);
+          } else if (e.button === 2) {
+            this.ToggleFlag(cellClicked);
+          }
+        });
+        cell.addEventListener("click", () => {});
         this.game.append(cell);
       }
     }
@@ -174,7 +249,8 @@ class Board {
 
   public RevealBoard() {
     for (var i = 0; i < this.cells.length; i++) {
-      this.RevealCell(this.cells[i]);
+      let htmlEl = this.FindDiv(this.cells[i]);
+      this.DisplayCell(this.cells[i], htmlEl);
     }
   }
 }

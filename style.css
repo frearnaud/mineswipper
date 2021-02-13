@@ -67,6 +67,7 @@ label {
   border: 1px solid rgb(78, 116, 160);
   width: 20px;
   height: 20px;
+  transition: all 150ms ease-out;
 }
 
 .r-0 {
@@ -90,12 +91,30 @@ button {
   text-align: center;
 }
 
+.cell:hover {
+  transform: scale(1.2);
+  transition: all 150ms ease-in;
+}
+
 .empty {
   background-color: rgb(184, 216, 238);
 }
 
+.flag {
+  background-color: blanchedalmond;
+}
+
 .mine {
   background-color: rgb(255, 180, 180);
+}
+
+.touched {
+  background-color: red !important;
+  color: white;
+}
+
+.flag::before {
+  content: "F";
 }
 
 .mine::before {
@@ -133,4 +152,8 @@ button {
 
 .ar7::before {
   content: "7";
+}
+
+.cell ::before {
+  transition: all 150ms ease-in;
 }
